@@ -1,0 +1,178 @@
+/* <========== Variables ==========> */
+
+/**
+ * Define el tamaño de cada casilla del tablero (se aplica en la tabla y en el cálculo del tamaño de las imágenes de los barcos).
+ *     ":root" selecciona el elemento raíz de la página, la etiqueta "<html>"; las variables declaradas aquí se pueden usar en cualquier parte del CSS.
+ *     "--casilla" es una variable CSS (propiedad personalizada): funciona igual que un "const" de JS, guarda un valor con un nombre y se reutiliza en varios sitios con "var(--casilla)".
+ */
+:root{ --casilla: 50px; } /* "--" Cualquier nombre que empiece por + "casilla" */
+
+
+/* <========== Generales ==========> */
+
+/* Reseteo general, aplicado a todos los elementos de la página ("*" selector universal). */
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Cuerpo de la página: centra el contenido (el tablero) en la pantalla y pone el océano de fondo. */
+body{
+    min-width: 100vw;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #d0ceca;
+
+    /* Imagen de fondo de la página (océano en calma). */
+    background-image: url("../Images/Agua/oceanoEnCalma.png");
+    background-size: cover;
+    background-attachment: fixed;
+}
+
+main{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+
+/* <========== Tablero ==========> */
+
+/* Tabla del tablero. */
+.tablero{ border-collapse: collapse; }
+
+/* Todas las cuadrículas de la tabla (las casillas del tablero). Cabeceras "th" y casillas de juego "td". */
+.tablero th, .tablero td{
+    width: var(--casilla);
+    height: var(--casilla);
+    text-align: center;
+    border: 1px solid black;
+}
+
+/* Casillas de cabecera (numeración de filas y columnas). */
+.tablero th{ background-color: #a9a6a0; }
+
+/* Casilla de agua (todas las casillas de juego). */
+.agua{
+    position: relative;
+    padding: 0;
+    background-image: url("../Images/Agua/oceanoRevuelto.png");
+    background-size: cover;
+}
+
+
+/* <========== Barcos ==========> */
+
+/* Imagen del barco, se coloca sobre la casilla ancla y se extiende hacia la derecha tantas casillas como indica "--longitud". */
+.imagenBarco{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: calc(var(--casilla) * var(--longitud));
+    height: var(--casilla);
+    object-fit: fill;
+    z-index: 1;
+}
+
+/* Barco vertical, se gira 90º y se desplaza para que quede dentro de la columna, extendiéndose hacia abajo. */
+.imagenBarco.vertical{
+    transform-origin: top left;
+    transform: rotate(90deg) translateY(-100%);
+}
+
+/* Barco oculto, la imagen está en la página (ocupa su sitio y conserva su tamaño y giro), pero no se ve hasta que el barco se hunde. */
+.imagenBarco.oculto{ visibility: hidden; }
+
+
+/* <========== Marcas de disparo ==========> */
+
+/** Marca del disparo (agua o tocado), cubre la casilla por encima del barco intacto pero por debajo del barco hundido.
+ *     "pointer-events: none" hace que la imagen ignore el ratón (los clics y el "hover" siguen llegando al botón).
+ */
+.marcaDisparo{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    z-index: 2;
+    pointer-events: none;
+}
+
+/* Barco hundido, se coloca por encima de las marcas de tocado de sus casillas. */
+.imagenBarco.hundido{ z-index: 3; }
+
+
+/* <========== Botones de disparo ==========> */
+
+/* Botón de disparo: ocupa toda la casilla, es transparente (se sigue viendo el agua o el barco) y queda por encima de todas las imágenes para poder recibir el clic. */
+.botonCasilla{
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+    background-color: transparent;
+    cursor: crosshair;
+    z-index: 4;
+}
+
+/* Al pasar el ratón por encima, la casilla se ilumina ligeramente para indicar a dónde se va a disparar. */
+.botonCasilla:hover{ background-color: rgba(255, 255, 255, 0.25); }
+
+/* Casilla ya disparada: el botón desactivado muestra el cursor de prohibido y deja de iluminarse al pasar el ratón. */
+.botonCasilla:disabled{ cursor: not-allowed; }
+.botonCasilla:disabled:hover{ background-color: transparent; }
+
+
+/* <========== Mensajes de la partida ==========> */
+
+/* Cartel de anuncios: se coloca encima del tablero, con fondo blanco semitransparente para que se lea sobre el océano. */
+.mensaje{
+    margin-bottom: 15px;
+    padding: 10px 20px;
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.85);
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* Color del texto según el suceso anunciado. */
+.mensaje.agua{ color: #1e40af; }
+.mensaje.tocado{ color: #c2410c; }
+.mensaje.hundido{ color: #b91c1c; }
+
+/* Fin de la partida: fondo verde para destacar la victoria. */
+.mensaje.victoria{
+    background-color: #dcfce7;
+    color: #166534;
+}
+
+
+/* <========== Botón de reinicio ==========> */
+
+/* Botón "Reiniciar": centrado debajo del tablero ("display: block" + "margin: auto" lo centran horizontalmente). */
+.botonReiniciar{
+    display: block;
+    margin: 15px auto 0;
+    padding: 8px 24px;
+    border: none;
+    border-radius: 8px;
+    background-color: #1e40af;
+    color: white;
+    font-family: Arial, sans-serif;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* Al pasar el ratón por encima, el botón se oscurece ligeramente. */
+.botonReiniciar:hover{ background-color: #1e3a8a; }
