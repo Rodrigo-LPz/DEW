@@ -1,0 +1,106 @@
+/* <========== Variables ==========> */
+
+/* Colores reutilizables de la página (se leen con "var(--nombre)"). */
+:root{
+    --colorFondo:      #0f172a;
+    --colorTarjeta:    #1e293b;
+    --colorTexto:      #e2e8f0;
+    --colorBorde:      #334155;
+    --colorPrincipal:  #3b82f6;
+    --colorValido:     #22c55e;
+    --colorError:      #ef4444;
+}
+
+
+/* <========== Generales ==========> */
+
+/* Reinicio básico aplicado a todos los elementos. */
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Cuerpo: fondo oscuro y formulario centrado en horizontal. */
+body{
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 32px 16px;
+    background-color: var(--colorFondo);
+    color: var(--colorTexto);
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+
+/* <========== Formulario ==========> */
+
+/* Tarjeta que contiene todo el formulario. */
+form{
+    width: 100%;
+    max-width: 520px;
+    padding: 28px;
+    background-color: var(--colorTarjeta);
+    border-radius: 14px;
+}
+
+h1{ margin-bottom: 20px; text-align: center; font-size: 1.5rem; }
+
+/* Cada campo: etiqueta arriba, input debajo y aviso oculto. */
+.campo{ margin-bottom: 16px; display: flex; flex-direction: column; }
+
+.campo label{ margin-bottom: 6px; font-weight: 600; }
+
+.campo input{
+    padding: 10px 12px;
+    border: 2px solid var(--colorBorde);
+    border-radius: 8px;
+    background-color: #0b1220;
+    color: var(--colorTexto);
+    outline: none;
+}
+
+.campo input:focus{ border-color: var(--colorPrincipal); }
+
+/* Estados de validación (las clases las añade el JS). */
+.campo input.valido{ border-color: var(--colorValido); }
+.campo input.error{ border-color: var(--colorError); }
+
+/* Aviso con el formato correcto: oculto por defecto, visible si el campo es erróneo. */
+.aviso{
+    margin-top: 6px;
+    font-size: 0.85rem;
+    color: var(--colorError);
+    display: none;
+}
+
+/* El aviso se muestra cuando su input hermano tiene la clase "error". */
+.campo input.error ~ .aviso{ display: block; }
+
+
+/* <========== Botones ==========> */
+
+.botones{ display: flex; gap: 12px; margin-top: 20px; }
+
+button{
+    flex: 1;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    color: #ffffff;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.guardar{ background-color: var(--colorPrincipal); }
+.recuperar{ background-color: #64748b; }
+
+button:hover{ opacity: 0.9; }
+
+
+/* <========== Mensaje de resultado ==========> */
+
+.mensaje{ margin-top: 16px; min-height: 1.2em; text-align: center; font-weight: 600; }
+.mensaje.exito{ color: var(--colorValido); }
+.mensaje.error{ color: var(--colorError); }
