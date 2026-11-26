@@ -1,0 +1,180 @@
+/* <========== Variables ==========> */
+
+/**
+ * Medidas y colores reutilizables.
+ *     "--alturaCelda" Alto de cada celda de la torre (y por tanto de cada disco).
+ */
+:root{
+    --alturaCelda: 50px;
+    /*
+    --colorFondo: #1E2A38;
+    --colorTablero: #2E3F52;
+    --colorMadera: #A0703C;
+    --colorTexto: #F1F4F8;
+    --colorSeleccion: #FFD43B;
+    */
+    --colorFondo: #321A30;
+    --colorTablero: #4B2A48;
+    --colorMadera: #C08A55;
+    --colorTexto: #F7EEF6;
+    --colorSeleccion: #FFFFFF;
+}
+
+
+/* <========== Generales ==========> */
+
+/* Reseteo general, aplicado a todos los elementos de la página ("*" selector universal). */
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Cuerpo de la página: contenido centrado en horizontal. */
+body{
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 16px;
+    background-color: var(--colorFondo);
+    color: var(--colorTexto);
+    font-family: "Segoe UI", Arial, sans-serif;
+}
+
+/* Contenedor principal: ocupa casi todo el ancho, con un máximo para pantallas grandes. */
+main{
+    width: 100%;
+    max-width: 900px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+h1{ margin-bottom: 16px; text-align: center; }
+
+/* Mensaje de error del programa. */
+.mensaje.error{ background-color: #8B1E1E; }
+
+
+/* <========== Panel de control y marcadores ==========> */
+
+/* Fila con el nombre del jugador y los botones (pasan a varias filas si la pantalla es estrecha). */
+.panel, .marcadores{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+}
+
+.panel input{
+    margin-left: 6px;
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: none;
+}
+
+button{
+    padding: 8px 18px;
+    font-weight: 600;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+/* Marcadores: números destacados. */
+.marcadores span{ font-weight: 700; }
+
+/* División de mensajes del juego. */
+.mensaje{
+    width: 100%;
+    padding: 10px 16px;
+    text-align: center;
+    background-color: var(--colorTablero);
+    border-radius: 8px;
+}
+
+/* Mensaje de éxito (torre terminada): fondo verde. */
+.mensaje.exito{ background-color: #2F7D4A; }
+
+/* Mensaje de aviso (movimiento no permitido): fondo ámbar con texto oscuro. */
+.mensaje.aviso{
+    background-color: #F2C14E;
+    color: #1E2A38;
+}
+
+
+/* <========== Tablero ==========> */
+
+/* Las tres torres en fila, apoyadas sobre una base común. */
+.tablero{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 24px 12px 0;
+    background-color: var(--colorTablero);
+    border-bottom: 16px solid var(--colorMadera); /* Base de madera común a las tres torres. */
+    border-radius: 12px 12px 0 0;
+}
+
+/**
+ * Torre: columna de celdas.
+ *     "position: relative" sirve de referencia para colocar el palo ("::before") en su centro.
+ */
+.torre{
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+}
+
+/* Palo vertical de la torre, dibujado con CSS detrás de los discos ("::before" crea un elemento extra sin tocar el HTML). */
+.torre::before{
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: -12px;
+    bottom: 0;
+    width: 12px;
+    transform: translateX(-50%); /* Centra el palo (lo desplaza la mitad de su propio ancho). */
+    background-color: var(--colorMadera);
+    border-radius: 6px 6px 0 0;
+}
+
+/* Celda de la torre: hueco para un disco, centrado. "position: relative" la pone por delante del palo. */
+.celda{
+    position: relative;
+    height: var(--alturaCelda);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+/* <========== Discos ==========> */
+
+/**
+ * Disco: ocupa casi todo el alto de la celda; el ancho y el color base los pone el JS según su tamaño ("style.width" y "style.backgroundColor").
+ *     "background-image" pinta un degradado ENCIMA del color base: brillo blanco arriba y sombra oscura abajo, para dar efecto de volumen (como una pieza de madera barnizada).
+ *     "box-shadow" añade dos sombras: una interior (borde más oscuro, "inset") y otra exterior (el disco "flota" sobre el tablero).
+ */
+.disco{
+    height: 80%;
+    border-radius: 999px; /* Valor muy grande: los extremos quedan totalmente redondeados, sea cual sea el ancho del disco. */
+    background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0.10) 40%, rgba(0, 0, 0, 0.25) 100%);
+    box-shadow: inset 0 -3px 0 rgba(0, 0, 0, 0.25), 0 4px 6px rgba(0, 0, 0, 0.35);
+    transition: transform 0.15s; /* Animación suave al cambiar de posición ("transform"). */
+}
+
+/* Disco con el ratón encima: se eleva un poco para indicar que se puede pulsar. */
+.disco:hover{ transform: translateY(-3px); }
+
+/* Disco seleccionado para mover (se añadirá/quitará esta clase desde JS): se eleva más y se rodea de un brillo amarillo. */
+.disco.seleccionado{
+    transform: translateY(-8px);
+    box-shadow: 0 0 0 4px var(--colorSeleccion), 0 8px 14px rgba(0, 0, 0, 0.45);
+}
